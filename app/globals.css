@@ -1,26 +1,262 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-app: transparent;
+  --bg-sidebar: rgba(8, 12, 28, 0.58);
+  --bg-topbar: rgba(6, 10, 26, 0.72);
+  --bg-card: rgba(10, 16, 34, 0.72);
+  --bg-card-hover: rgba(24, 32, 62, 0.85);
+  --bg-input: rgba(6, 10, 24, 0.88);
+  --border: rgba(196, 181, 253, 0.2);
+  --border-glow: rgba(129, 140, 248, 0.4);
+  --text-primary: #fafafa;
+  --text-secondary: #e9d5ff;
+  --text-muted: #a5b4fc;
+  --accent-teal: #5eead4;
+  --accent-teal-dim: #2dd4bf;
+  --accent-purple: #d8b4fe;
+  --accent-red: #fda4af;
+  --accent-blue: #93c5fd;
+  --accent-orange: #fdba74;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-app);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: #050816;
+}
+
+/* Animated aurora background */
+.app-background__base {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(125deg, #0c0a1f 0%, #1a1040 22%, #1e3a8a 48%, #581c87 72%, #0e7490 100%);
+  background-size: 200% 200%;
+  animation: shift-gradient 22s ease infinite;
+}
+
+.app-background__shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(167, 139, 250, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    transparent 100%
+  );
+  background-size: 250% 250%;
+  animation: shimmer 14s ease-in-out infinite;
+}
+
+.app-background__mesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(129, 140, 248, 0.45), transparent 58%),
+    radial-gradient(ellipse 65% 50% at 100% 40%, rgba(59, 130, 246, 0.28), transparent 52%),
+    radial-gradient(ellipse 60% 45% at 0% 75%, rgba(192, 132, 252, 0.3), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 80% 90%, rgba(34, 211, 238, 0.18), transparent 48%),
+    linear-gradient(180deg, transparent 0%, rgba(5, 8, 22, 0.55) 100%);
+}
+
+.app-background__orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.85;
+  animation: float-orb 20s ease-in-out infinite;
+}
+
+.app-background__orb--violet {
+  top: -10%;
+  left: -8%;
+  width: 580px;
+  height: 580px;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.65) 0%, rgba(167, 139, 250, 0) 68%);
+}
+
+.app-background__orb--blue {
+  top: 12%;
+  right: -12%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.55) 0%, rgba(59, 130, 246, 0) 68%);
+  animation-delay: -5s;
+}
+
+.app-background__orb--cyan {
+  bottom: -15%;
+  left: 22%;
+  width: 620px;
+  height: 620px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.38) 0%, rgba(34, 211, 238, 0) 68%);
+  animation-delay: -11s;
+}
+
+.app-background__orb--pink {
+  bottom: 8%;
+  right: 12%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.35) 0%, rgba(244, 114, 182, 0) 68%);
+  animation-delay: -8s;
+}
+
+.app-background__orb--gold {
+  top: 42%;
+  left: 38%;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.18) 0%, rgba(251, 191, 36, 0) 68%);
+  animation-delay: -15s;
+}
+
+.app-background__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.brand-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(167, 139, 250, 0.55),
+    rgba(56, 189, 248, 0.55),
+    transparent
+  );
+}
+
+.brand-icon-ring {
+  animation: icon-glow 4s ease-in-out infinite;
+}
+
+.topbar-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 88px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    145deg,
+    rgba(99, 102, 241, 0.12),
+    rgba(168, 85, 247, 0.08)
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.topbar-stat__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.topbar-stat__value {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.app-topbar {
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.25);
+}
+
+@keyframes icon-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(34, 211, 238, 0.45));
+  }
+}
+
+@keyframes shift-gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(28px, -22px) scale(1.06);
+  }
+  66% {
+    transform: translate(-20px, 18px) scale(0.94);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(196, 181, 253, 0.55), rgba(96, 165, 250, 0.55));
+  border-radius: 999px;
+}
+
+.glass-panel {
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 40px rgba(15, 23, 42, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-background__base,
+  .app-background__shimmer,
+  .app-background__orb,
+  .brand-icon-ring {
+    animation: none;
+  }
 }
