@@ -22,8 +22,10 @@ import GetExpenseView from "./views/GetExpenseView";
 import SpendingByCategoryView from "./views/SpendingByCategoryView";
 import TotalSpendingView from "./views/TotalSpendingView";
 import UpdateExpenseView from "./views/UpdateExpenseView";
+import { useAuth } from "./auth/AuthProvider";
 
 export default function ExpenseTracker() {
+  const { user, logout } = useAuth();
   const [activeNav, setActiveNav] = useState<NavItem>("get-all-expenses");
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [totalSpent, setTotalSpent] = useState(0);
@@ -147,7 +149,9 @@ export default function ExpenseTracker() {
           totalSpent={totalSpent}
           loading={loading || summaryLoading}
           apiOnline={apiOnline}
+          userName={user?.name}
           onRefresh={refreshAll}
+          onLogout={logout}
         />
 
         {error && (

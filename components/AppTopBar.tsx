@@ -10,7 +10,9 @@ interface AppTopBarProps {
   totalSpent: number;
   loading: boolean;
   apiOnline: boolean;
+  userName?: string;
   onRefresh: () => void;
+  onLogout: () => void;
 }
 
 const METHOD_STYLES: Record<string, string> = {
@@ -26,7 +28,9 @@ export default function AppTopBar({
   totalSpent,
   loading,
   apiOnline,
+  userName,
   onRefresh,
+  onLogout,
 }: AppTopBarProps) {
   const meta = getNavMeta(activeNav);
   const now = new Date().toLocaleDateString(undefined, {
@@ -110,6 +114,36 @@ export default function AppTopBar({
               />
             </svg>
             Refresh
+          </button>
+
+          {userName && (
+            <div className="topbar-stat hidden md:flex">
+              <span className="topbar-stat__label">Signed in</span>
+              <span className="topbar-stat__value truncate text-sm">
+                {userName}
+              </span>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onLogout}
+            className="inline-flex items-center gap-2 rounded-xl border border-rose-400/25 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:bg-rose-500/20"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+              />
+            </svg>
+            Logout
           </button>
         </div>
       </div>

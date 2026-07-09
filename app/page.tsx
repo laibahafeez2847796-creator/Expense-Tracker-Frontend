@@ -1,5 +1,10 @@
+import AuthGuard from "@/components/auth/AuthGuard";
 import ExpenseTracker from "@/components/ExpenseTracker";
 
 export default function Home() {
-  return <ExpenseTracker />;
+  return (
+    <AuthGuard>
+      <ExpenseTracker />
+    </AuthGuard>
+  );
 }

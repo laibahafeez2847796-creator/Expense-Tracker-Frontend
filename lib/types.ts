@@ -37,3 +37,37 @@ export interface MessageResponse {
 export interface ApiError {
   detail?: string;
 }
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface SignupPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface SignupResponse {
+  message: string;
+  user: User;
+}
+
+export interface LoginResponse {
+  message: string;
+  access_token: string;
+  token_type: string;
+  user: User;
+}
+
+export interface ProfileResponse {
+  message: string;
+  user: User;
+}

@@ -1,9 +1,15 @@
+import { clearAuthSession, getStoredToken } from "./auth-storage";
 import type {
   ApiError,
   CreateExpensePayload,
   Expense,
   FilteredExpense,
+  LoginPayload,
+  LoginResponse,
   MessageResponse,
+  ProfileResponse,
+  SignupPayload,
+  SignupResponse,
   SpendingByCategory,
   TotalSpending,
   UpdateExpensePayload,
@@ -14,7 +20,23 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 const BACKEND_HINT =
   "Make sure the backend is running: uv run python main.py (http://localhost:8000)";
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+export class UnauthorizedError extends Error {
+  constructor(message = "Session expired. Please log in again.") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
+function authHeaders(): Record<string, string> {
+  const token = getStoredToken();
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}
+
+async function publicRequest<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
   let response: Response;
 
   try {
@@ -40,6 +62,64 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  let response: Response;
+
+  try {
+    response = await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders(),
+        ...options?.headers,
+      },
+    });
+  } catch {
+    throw new Error(`Failed to fetch. ${BACKEND_HINT}`);
+  }
+
+  if (response.status === 401) {
+    clearAuthSession();
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("auth:unauthorized"));
+    }
+    const error: ApiError = await response.json().catch(() => ({}));
+    throw new UnauthorizedError(
+      error.detail ?? "Authorization token required"
+    );
+  }
+
+  if (!response.ok) {
+    const error: ApiError = await response.json().catch(() => ({}));
+    const message =
+      error.detail ??
+      (response.status >= 500
+        ? `Server error (${response.status}). ${BACKEND_HINT}`
+        : `Request failed (${response.status})`);
+    throw new Error(message);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export function signup(payload: SignupPayload): Promise<SignupResponse> {
+  return publicRequest<SignupResponse>("/signup", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function login(payload: LoginPayload): Promise<LoginResponse> {
+  return publicRequest<LoginResponse>("/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getProfile(): Promise<ProfileResponse> {
+  return request<ProfileResponse>("/profile");
 }
 
 export function getExpenses(): Promise<Expense[]> {
